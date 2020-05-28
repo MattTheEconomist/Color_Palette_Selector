@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>colorz</title>
+</head>
+<style>
+
+:root{
+    --primeColor: 50; 
+    --comp1: 260; 
+    --comp2: 200; 
+}
+    #primary{
+        background-color: hsl(var(--primeColor), 100%, 60%);
+        height: 150px;
+        width:30%;
+        display:inline-block;
+        font-weight:bold; 
+    }
+    #complement1{
+        background-color: hsl(var(--comp1), 100%, 60%);
+        height: 150px;
+        width:30%;
+        display:inline-block;
+        font-weight:bold; 
+    }
+    #complement2{
+        background-color: hsl(var(--comp2), 100%, 60%);
+        height: 150px;
+        width:30%;
+        display:inline-block;
+        font-weight:bold; 
+    }
+
+
+</style>
+
+
+<body>
+<div id="primary">50</div>
+<div id="complement1">260</div>
+<div id="complement2">200</div>
+<div class="buttons">
+    <button id="myButt">Randomize</button>
+    <button id="startButt">Start Sequence</button>
+    <button id="stopButt">Stop Sequence</button>
+</div>
+<br>
+<br>
+<select name="Color Scheme" id="schemeSelect">
+    <option value="SplitComp">Split-Complementary</option>
+    <option value="Analagous">Analagous</option>
+    <option value="Triad">Triad</option>
+</select>
+<br>
+<br>
+<div id="explanation">
+    Hue HSL values of split-complementary color scheme
+</div>
+
+
+
+
+    
+</body>
+<script>
+myButt = document.querySelector("#myButt"); 
+startButt = document.querySelector("#startButt")
+stopButt = document.querySelector("#stopButt")
+selectButt = document.querySelector("#schemeSelect")
+primaryBlock = document.querySelector("#primary")
+comp1Block = document.querySelector("#complement1")
+comp2Block = document.querySelector("#complement2")
+explanation = document.querySelector("#explanation")
+
+
+
+myButt.addEventListener('click', randomColor)
+
+startButt.addEventListener("click", colorSequence)
+stopButt.addEventListener("click", stopSequence)
+selectButt.addEventListener('change', changeScheme)
+
+let primeColor = 50; 
+let comp1 = 260; 
+let comp2 = 200; 
+let root = document.documentElement;
+let inLoop = false; 
+let currentScheme = 'SplitComp'
+let temp =0;
+
+function changeScheme(e){
+    currentScheme = e.target.value
+    console.log(currentScheme)
+    randomColor()
+    explanation.innerHTML=`Hue HSL values of ${currentScheme} color scheme`
+}
+
+function updateColor(primeColor){
+    currentScheme=selectButt.value
+    if(currentScheme==='SplitComp'){
+        comp1 = ((primeColor+180)+30)%360; 
+        comp2 = ((primeColor+180)-30)%360;
+        console.log('split')
+    }
+    else if(currentScheme==='Analagous'){
+        comp1 = (primeColor+30)%360
+        temp = primeColor-30
+        temp>0? comp2 =temp:comp2=360+temp
+        console.log('anal')
+    }
+    else if(currentScheme ==='Triad'){
+        comp1 = (primeColor+120)%360
+        temp = primeColor-120
+        temp>0? comp2 =temp:comp2=360+temp
+        console.log('triad')
+    }
+    }
+
+
+function randomColor(e){
+    primeColor = Math.floor(Math.random()*Math.floor(360))
+    updateColor(primeColor)
+
+    root.style.setProperty('--primeColor', primeColor);
+    root.style.setProperty('--comp1', comp1);
+    root.style.setProperty('--comp2', comp2);
+    // console.log(primeColor, comp1, comp2)
+    primaryBlock.innerHTML=`${primeColor}`
+    comp1Block.innerHTML = `${comp1}`
+    comp2Block.innerHTML = `${comp2}`
+    
+    // e.preventDefault()
+}
+
+function colorSequence(e){
+    interval = setInterval(function(){
+        primeColor= (primeColor+1)%360
+        updateColor(primeColor)
+        root.style.setProperty('--primeColor', primeColor);
+        root.style.setProperty('--comp1', comp1);
+        root.style.setProperty('--comp2', comp2)
+        primaryBlock.innerHTML=`${primeColor}`
+        comp1Block.innerHTML = `${comp1}`
+        comp2Block.innerHTML = `${comp2}`
+    },50)
+    e.preventDefault()
+
+}
+
+
+
+function stopSequence(e){
+    clearInterval(interval)
+}
+
+
+
+</script>
+</html>
